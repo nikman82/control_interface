@@ -1,0 +1,308 @@
+<!DOCTYPE HTML><html>              <!--deklaration den Browser nach HTML Standarts zu handeln-->
+<head>
+  <title>Ansteuerung Stap Converter</title>
+<style>     
+  body{
+background-color: darkslategray;  /* Hintergrund Farbe dunkel-hell-grau */
+  }
+
+/* Elemente der Webseite  bekommen eine feste Position. Durch id -identifizierung 
+werden die Positionen je nach id-Zuweisung klar positioniert*/
+
+#parameter{               /* id="parameter" Posiiton für Parameter Block */
+        position: absolute;
+        right: 0em;
+        left:10em;
+        width: 400px;
+        top: 5em;
+}
+#messwerte {              /*id="messwerte" Posiiton für Messwerte Eingabe Block */
+
+        position: absolute;
+        right: 0em;
+        left: 50em;
+        top: 20em;
+        width: 250px;
+}
+#stapform{              /*id="start_stop" Posiiton für Stap Converter Form Block */
+ 
+        position: absolute;
+        right: 0em;
+        left:90em;
+        width: 300px;
+        top: 5em;
+}
+
+#start_stop{              /*id="start_stop" Posiiton für Start-Stop Block*/
+
+        position: absolute;
+        right: 0em;
+        left:47em;
+        width: 1000px;
+        top: 40em;
+}
+
+
+h1{color:white}h2{color:white}h3{color:white}
+
+  .button {                             /* Einstellungen  zur den Knopfen */
+  display: inline-block;                /*Erzeugung eines Boxes */
+  background-color: #FFFFFF;            /* Box Frame Weiss */ 
+  border: none;                         /*  Box Rahmen keine Angaben */
+  border-radius: 4px;                   /* Box mit radius von 4 pixel 0.03 cm*/
+  color: black;                         /* Schrift Farbe Schwarz */
+  padding: 16px 40px;                   /*Innen Abstand */
+  text-decoration: none;                /* Text Decoration: Voreinstellung */ 
+  font-size: 30px;                      /* Schriftgrad 0,25cm*/
+  margin: 2px;                          /* Äußere Abstand */
+  cursor: pointer;                      /* Cursor in Form eines Zeigers */
+}
+
+
+
+input[type=number] {      /*Voreinstellung Nummer Eingabe Fenster*/
+  width: 30%;            /* Elementen Breite 100% */
+  padding: 8px 20px;      /* Innenabstand  */
+  margin: 8px 0;          /* Außenabstand */
+  box-sizing: border-box; /* Angabe gilt für Inhalt, Innenabstand und Rahmen */
+  border: 3px solid black;/* Rahmen Aussehen */
+  border-radius: 4px;     /* Rahmen Radius */
+}
+
+
+input[type=submit] {      /*Voreinstellung Nummer Eingabe Fenster*/
+  width: 20%;            /* Elementen Breite 100% */
+  padding: 8px 20px;      /* Innenabstand  */
+  margin: 8px 0;          /* Außenabstand */
+  box-sizing: border-box; /* Angabe gilt für Inhalt, Innenabstand und Rahmen */
+  border: 3px solid black;/* Rahmen Aussehen */
+  border-radius: 4px;     /* Rahmen Radius */
+}
+
+.title{
+  background-color: #FFFFFF;  /* Titel Schriftfarbe:Weiß */
+}
+</style>                  <!--Bereich stylistische Eigeschgaften Ende -->
+    </head>               <!--Kopf Bereich Ende -->
+        <body>            <!--Anfang der anzuzeigender Inhalts -->
+          <center><h1>Stap Converter Ansteuerung</h1></center>
+            
+            <div id="parameter">
+    
+              <h2>Parameter</h2>  <!-- <h2><h2> Mittelgroßes Überschrift -->
+              
+              <br>                <!-- br-Element macht visuell einen Zeilenumbruch-->
+                <!-- form-Element definiert ein Formular auf der Webseite
+               Das Attribute action erhält ein Adresse, welche beum Klicken auf dem submit-button
+              gesendet werden kann. Wodurch ein Request ausgelöst werden kann. -->
+       
+                
+                <!-- Eingabe defenition: Name q,Eingabfeld :auf Zahlen beschränken, 
+                Eingabebreich: 0.1 bis 5, Start Wert (value) 0, eingabe in Scrollfeld 0.1 usw.  -->
+
+                Um: <input type="number" id="Stap_Um"  required name="Um_S" min="0.1" max="5" value="0" step="0.1">
+                <input type="submit" onclick = "onStap_Um_()" value="Ok">
+            
+              </br>
+              <br>
+           
+                Im: <input type="number" id="Stap_Im" required name="Im_S" min="0" max="90" value="0" step="0.1">
+                <input type="submit"  onclick = "onStap_Im_()" value="Ok">
+           
+              </br>
+              <br>
+      
+                fp: <input type="number" id="Stap_fp"  required name="fp_S" min="1" max="100000" value="0" step="1">
+                <input type="submit" onclick = "onStap_fp_()" value="Ok">
+ 
+              </br>
+              <br>
+           
+                D: <input type="number" id="Stap_D" required name="D_S" min="0.1" max="1" value="0" step="0.1">
+                <input type="submit" onclick = "onStap_D_()" value="Ok">
+          
+              </br>
+            </div>
+
+            <div id="stapform">
+              <h2>Typ Konverter</h2>
+              <br>
+              <!-- a-Element mit href-Atribute als Verweis mit Verweiswert als Ziel z.B. <a href="..."> </a> 
+              class-Atribute ordnet ein Element zur classe bitton --> 
+                <a><button id="Stap_UP" onclick = "onStap_UP_()" class="button botton2">Hochsetzsteller</button></a>
+              </br>
+                <br>
+                <a><button id="Stap_DOWN" onclick = "onStap_DOWN_()" class="button botton2">Tiefsetzsteller</button></a>
+              </br>
+            </div>
+            <div id="start_stop">
+              <a><button id="START_S" onclick = "START_S_()" class="button botton3">START</button></a>
+              <a href="/STOP"><button class="button botton3">STOP</button></a>
+            </div>
+            <div id="messwerte">
+              <h2>Messwerte</h2>
+            <p>
+              <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
+              <span class="voltage">Spannung Up</span> 
+              <span id="voltage_stap">%STAP_U%</span> V
+            </p>
+            <p>
+              <i class="fas fa-tint" style="color:#00add6;"></i> 
+              <span class="current_stap">Strom Ip</span>
+              <span id="current_stap">%STAP_STROM%</span> A
+            </p>
+            </br>
+            </div>
+          </body>
+
+        <script>
+		
+var url = "ws://192.168.4.1:1337/";
+var output;
+var Um;
+var Im;
+var fp;
+var D;
+var Stap_Up;
+var Stap_Down;
+var START_S;
+
+// This is called when the page finishes loading
+function init() {
+ 
+    // Assign page elements to variables
+    output = document.getElementById("output");
+    
+    // Connect to WebSocket server
+    wsConnect(url);
+}
+ 
+// Call this to connect to the WebSocket server
+function wsConnect(url) {
+    
+    // Connect to WebSocket server
+    websocket = new WebSocket(url);
+    
+    // Assign callbacks
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+}
+ 
+// Called when a WebSocket connection is established with the server
+function onOpen(evt) {
+ 
+    // Log connection state
+    console.log("Connected");
+    
+    // Enable button
+    //button.disabled = false;
+    
+    // Get the current state of the LED
+    doSend("Stap_State");
+}
+ 
+// Called when the WebSocket connection is closed
+function onClose(evt) {
+ 
+    // Log disconnection state
+    console.log("Disconnected");
+    
+    // Disable button
+    //button.disabled = true;
+    
+    // Try to reconnect after a few seconds
+    setTimeout(function() { wsConnect(url) }, 2000);
+}
+ 
+// Called when a message is received from the server
+function onMessage(evt) {
+ 
+    // Print out our received message
+    console.log("Received: " + evt.data);
+
+}
+ 
+// Called when a WebSocket error occurs
+function onError(evt) {
+    console.log("ERROR: " + evt.data);
+}
+ 
+// Sends a message to the server (and prints it to the console)
+function doSend(message) {
+    console.log("Sending: " + message);
+    websocket.send(message);
+}
+ 
+// Called whenever the HTML button is pressed
+function onStap_Um_() {
+	Um = document.getElementById("Stap_Um").value;
+	console.log(Um);
+    doSend("Stap_Um");
+    doSend(Um);
+}
+
+function onStap_fp_() {
+  fp = document.getElementById("Stap_fp").value;
+  console.log(fp);
+  doSend("Stap_fp");
+  doSend(fp);
+}
+function onStap_D_() {
+  D = document.getElementById("Stap_D").value;
+  console.log(D);
+  doSend("Stap_D");
+  doSend(D);
+}
+
+function onStap_Im_() {
+	Im = document.getElementById("Stap_Im").value;
+	console.log(Im);
+	doSend("Stap_Im");
+    doSend(Im);
+}
+function onStap_UP_() {
+	Stap_Up = document.getElementById("Stap_UP");
+    doSend("Stap_UP");
+}
+
+function onStap_DOWN_() {
+	Stap_Down = document.getElementById("Stap_DOWN");
+    doSend("Stap_DOWN");
+}
+
+function START_S_() {
+	START_S = document.getElementById("START_S");
+    doSend("START_S");
+}
+
+
+// Call the init function as soon as the page loads
+window.addEventListener("load", init, false);
+	/*
+          setInterval(function ( ) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("voltage_stap").innerHTML = this.responseText;
+              }
+            };
+            xhttp.open("GET", "/Voltage_Stap", true);
+            xhttp.send();
+          }, 1000 ) ;
+          
+          setInterval(function ( ) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("current_stap").innerHTML = this.responseText;
+              }
+            };
+            xhttp.open("GET", "/Current_Stap", true);
+            xhttp.send();
+          }, 1000 ) ;
+		  */
+        </script>
+    </body>
+  </html>

@@ -1,0 +1,334 @@
+<!DOCTYPE HTML><html>              <!-- deklaration den Browser nach HTML Standarts zu handeln  -->
+<head>
+  <title>Ansteuerung mit Pulsform</title>
+<style>     
+  body{
+background-color: darkslategray;  /*Hintergrund Farbe dunkel-hell-grau*/
+  }
+
+/*Elemente der Webseite  bekommen eine feste Position. Durch id -identifizierung 
+werden die Positionen je nach id-Zuweisung klar positioniert*/
+
+#parameter{               /*id="parameter" Posiiton für Parameter Block*/
+        position: absolute;
+        right: 0em;
+        left:10em;
+        width: 400px;
+        top: 5em;
+}
+
+#totzeit{                /*id="totzeit" Posiiton für Totzeit Eingabe Block*/
+        position: absolute;
+        right: 0em;
+        left: 90em;
+        width: 400px;
+        top: 30em;
+}
+
+#messwerte {              /*id="messwerte" Posiiton für Messwerte Eingabe Block*/
+        position: absolute;
+        right: 0em;
+        left: 50em;
+        top: 15em;
+        width: 250px;
+}
+#pulsform {               /*id="pulsform" Posiiton für Pulsform Aufwahl Block*/
+        position: absolute;
+        right: 0em;
+        left:90em;
+        width: 400px;
+        top: 5em;
+}
+#start_stop{              /*<id="start_stop" Posiiton für Start-Stop Block*/
+        position: relative;
+        right: 0em;
+        left:45em;
+        width: 1000px;
+        top: 30em;
+}
+
+h1{color:white}h2{color:white}h3{color:white}
+
+  .button {                            /* Einstellungen  zur den Knopfen*/
+  display: inline-block;               /* Erzeugung eines Boxes*/
+  background-color: #FFFFFF;           /* Box Frame Weiss --> */
+  border: none;                        /* Box Rahmen keine Angaben*/
+  border-radius: 4px;                  /* Box mit radius von 4 pixel 0.03 cm*/
+  color: black;                        /* Schrift Farbe Schwarz*/
+  padding: 16px 40px;                  /* Innen Abstand -->*/
+  text-decoration: none;               /* Text Decoration: Voreinstellung*/
+  font-size: 30px;                     /* Schriftgrad 0,25cm*/
+  margin: 2px;                         /* Äußere Abstand -->*/
+  cursor: pointer;                     /* Cursor in Form eines Zeigers*/
+}
+
+input[type=submit] {      /*Voreinstellung Nummer Eingabe Fenster*/
+  width: 20%;            /* Elementen Breite 100% */
+  padding: 8px 20px;      /* Innenabstand  */
+  margin: 8px 0;          /* Außenabstand */
+  box-sizing: border-box; /* Angabe gilt für Inhalt, Innenabstand und Rahmen */
+  border: 3px solid black;/* Rahmen Aussehen */
+  border-radius: 4px;     /* Rahmen Radius */
+}
+
+input[type=number] {      /*Voreinstellung Nummer Eingabe Fenster*/
+  width: 30%;            /* Elementen Breite 100% */
+  padding: 8px 20px;      /* Innenabstand  */
+  margin: 8px 0;          /* Außenabstand */
+  box-sizing: border-box; /* Angabe gilt für Inhalt, Innenabstand und Rahmen*/
+  border: 3px solid rgb(0, 0, 0); /* Rahmen Aussehen*/
+  border-radius: 4px;     /* Rahmen Radius*/
+}
+</style>                  <!-- Bereich stylistische Eigeschgaften Ende  -->
+    </head>               <!-- Kopf Bereich Ende -->
+	
+<script>             /*<!-- Anfang Java Script Code Umgebung -->*/
+var url = "ws://192.168.4.1:1337/";
+var output;
+var button;
+var canvas;
+var context;
+var Deadt_j;
+var Deadt_n;
+var f1;
+var q;
+var m;
+var PWM;
+var Block;
+var Schwenk;
+var START_P;
+var voltage;
+var current;
+// This is called when the page finishes loading
+function init() {
+ 
+    // Assign page elements to variables
+    //output = document.getElementById("output");
+    
+    // Connect to WebSocket server
+    wsConnect(url);
+}
+ 
+// Call this to connect to the WebSocket server
+function wsConnect(url) {
+    
+    // Connect to WebSocket server
+    websocket = new WebSocket(url);
+    
+    // Assign callbacks
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+	websocket.onmeasure = function(evt) { setInterval(evt) };
+}
+ 
+ // Called when a message is received from the server
+function onMessage(evt) {
+
+    // Print out our received message
+
+    console.log("Received: " + evt.data);
+	voltage=evt.data;
+	console.log("U = " + voltage);
+	voltageMeasure(evt);
+
+	   // Print out our received message
+    console.log("Received: " + evt.data);
+	current=evt.data;
+	console.log("I = " + current);
+	currentMeasure(evt);
+	
+}
+
+
+
+	function voltageMeasure(event) {
+  document.getElementById("voltage").innerHTML = event.data;
+}
+
+	function currentMeasure(event) {
+  document.getElementById("current").innerHTML = event.data;
+}
+ 
+// Called when a WebSocket connection is established with the server
+function onOpen(evt) {
+ 
+    // Log connection state
+    console.log("Connected");
+    
+    // Enable button
+    //button.disabled = false;
+    
+    // Get the current state of the LED
+    doSend("Pulsform_State");
+}
+ 
+// Called when the WebSocket connection is closed
+function onClose(evt) {
+ 
+    // Log disconnection state
+    console.log("Disconnected");
+    
+    // Disable button
+    //button.disabled = true;
+    
+    // Try to reconnect after a few seconds
+    setTimeout(function() { wsConnect(url) }, 2000);
+}
+ 
+ 
+// Called when a WebSocket error occurs
+function onError(evt) {
+    console.log("ERROR: " + evt.data);
+}
+
+// Sends a message to the server (and prints it to the console)
+function doSend(message) {
+    console.log("Sending: " + message);
+    websocket.send(message);
+}
+ 
+// Called whenever the HTML button is pressed
+function onDeadtime() {
+	Deadt_j = document.getElementById("Deadtime_ja");
+    doSend("Deadtime_ja");
+}
+
+function offDeadtime() {
+	Deadt_n = document.getElementById("Deadtime_nein");
+    doSend("Deadtime_nein");
+}
+
+function f1_() {
+  f1 = document.getElementById("Fest_f1").value;
+  console.log(f1);
+  doSend("Fest_f1");
+  doSend(f1);
+}
+
+function q_() {
+  q = document.getElementById("Fest_q").value;
+  doSend("Fest_q");
+  doSend(q);
+}
+function m_() {
+  m = document.getElementById("Fest_m").value;
+  console.log(m);
+  doSend("Fest_m"); 
+  doSend(m);
+}
+
+function PWM_() {
+	PWM = document.getElementById("PWM");
+    doSend("PWM");
+}
+function Block_() {
+	Block = document.getElementById("Block");
+    doSend("Block");
+}
+
+function Schwenk_() {
+	Schwenk = document.getElementById("Schwenk");
+    doSend("Schwenk");
+}
+
+function START_P_() {
+	START_P = document.getElementById("START_P");
+    doSend("START_P");
+}
+
+setInterval(function (evt) {
+ doSend("U"); 
+
+}, 1000);
+
+setInterval(function (evt) {
+ doSend("I");
+
+}, 1000);
+
+// Call the init function as soon as the page loads
+window.addEventListener("load", init, false);
+ 
+</script>	
+	
+        <body>            <!-- Anfang der anzuzeigender Inhalt -->
+  <center><h1>Pulsform</h1></center>    <!-- <h1><h1> Großes Überschrift -->
+  <div id="parameter">                    <!--id Bereich für Parameter -->
+
+    <h2>Parameter</h2>    <!-- <h2><h2> Mittelgroßes Überschrift -->
+    <br>                  <!-- br-Element macht visuell einen Zeilenumbruch-->
+      <!-- form-Element definiert ein Formular auf der Webseite
+      Das Attribute action erhält ein Adresse, welche beum Klicken auf dem submit-button
+      gesendet werden kann. Wodurch ein Request ausgelöst werden kann. -->
+    
+      q: <input type="number" id = "Fest_q" required name="q" min="1" max ="1000" value="0" step="2">
+      <!-- Eingabe defenition: Name q,Eingabfeld :auf Zahlen beschränken, 
+      Eingabebreich: 1 bis 1000, Start Wert (value) 0, eingabe in Scrollfeld 1..3..5 usw.  -->
+      <input type="submit" onclick = "q_()"  value="Ok">  <!-- Daten senden und request auslösen -->
+ 
+    </br>
+    <br>
+      
+      f1: <input type="number" id = "Fest_f1" required name="f1" min="1" max="50" value="0" step="1">
+      <input type="submit"  onclick = "f1_()" value="Ok">
+      
+    </br>
+      
+      D: <input type="number" id = "Fest_m" required name="D" min="0.1" max="1" value="0" step="0.1">
+      <input type="submit"  onclick = "m_()" value="Ok">
+     
+  </div>
+
+  <div id="totzeit">
+  
+    <h2>Totzeit</h2>
+
+    <br>
+      <!-- a-Element mit href-Atribute als Verweis mit Verweiswert als Ziel z.B. <a href="..."> </a> 
+      class-Atribute ordnet ein Element zur classe bitton --> 
+      <a <button id="Deadtime_ja" onclick="onDeadtime()" class="button botton1">JA</button></a>
+      <a <button id="Deadtime_nein" onclick="offDeadtime()" class="button botton1">NEIN</button></a>
+    </br>
+  </div>
+
+  <div id="pulsform">
+    <h2>Pulsformart</h2>
+    <br>
+    <a><button id="PWM" onclick="PWM_()" class="button botton3">PWM</button></a>
+    </br>
+    <br>
+    <a><button id="Block" onclick="Block_()" class="button botton3">Blocktaktung</button></a>
+    </br>
+    <br>
+    <a><button id="Schwenk" onclick="Schwenk_()" class="button botton3">Schwenksteuerung</button></a>
+    </br>
+  </div>
+
+  <div id="start_stop">
+    <a><button id="START_P" onclick="START_P_()" class="button botton2">START</button></a>
+    <a href="/STOP"><button class="button botton2">STOP</button></a>
+  </div>
+
+<div id="messwerte">
+ <h2>Messwerte</h2>
+    <!-- <p><\p> p-Element zur Gliederung des Textes -->
+  <p>                       
+    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i>
+    <!--Mit dem Element i wird ein Teil eines Fließtextes ausgezeichnet,
+    der sich vom übrigen Text abheben soll --> 
+
+    <span class="voltage">Spannung</span>   <!-- <span> leitet einen allgemeinen Inline-Bereich ein. </span> beendet diesen Bereich.  --> 
+    <span id="voltage" oninput = "voltageMeasure(evt)">0</span> V
+  </p>
+  <p>
+    <i class="fas fa-tint" style="color:#00add6;"></i> 
+    <span class="current">Strom</span>
+    <span id="current" oninput="currentMeasure(evt)">0</span> A
+  
+  </p>
+  </br>
+</div>
+</body>              <!-- Anfang der anzuzeigender Inhalts -->
+</html>

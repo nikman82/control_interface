@@ -1,0 +1,438 @@
+<!DOCTYPE HTML><html>
+<lang="de">
+<head>
+  <meta charset = "utf-8">
+    <title>Motor Ansteuerung mit Stap Converter</title>
+  <style>
+    body{
+  background-color:darkslategray;
+    }
+
+
+#parameter{                 /* id="parameter" Posiiton für Parameter Block*/
+        position: absolute;
+        right: 0em;
+        left:5em;
+        width: 400px;
+        top: 5em;
+}
+
+
+#totzeit{                    /*id="totzeit" Posiiton für Totzeit Eingabe Block*/
+        position: absolute;
+        right: 0em;
+        left: 90em;
+        width: 400px;
+        top: 40em;
+}
+
+#messwerte {                  /*id="messwerte" Posiiton für Messwerte Eingabe Block*/
+
+        position: absolute;
+        right: 0em;
+        left: 50em;
+        top: 20em;
+        width: 250px;
+}
+#stapform {                   /*id="start_stop" Posiiton für Stap Converter Form Block*/
+
+        position: absolute;
+        right: 60em;
+        left:90em;
+        width: 300px;
+        top: 5em;
+}
+
+#start_stop{                  /*id="start_stop" Posiiton für Start-Stop Block*/
+        position: absolute;
+        right: 0em;
+        left:45em;
+        width: 1000px;
+        top: 40em;
+}
+#m_richtung{                   /*id="m_richtung" Position für Motor Drehrichtung Block*/
+ 
+        position: absolute;
+        right: 40em;
+        left:90em;
+        width: 300px;
+        top:20em;
+}
+
+  h1{color: #FFFFFF;}h2{color: #FFFFFF;}h3{color: #FFFFFF;}
+  label {display: block;font: 1rem 'Fira Sans', sans-serif;}input,
+ 
+label {
+    margin: .4rem 0;
+}
+  .button {                             /* Einstellungen  zur den Knopfen */
+  display: inline-block;                /*Erzeugung eines Boxes */
+  background-color: #FFFFFF;            /* Box Frame Weiss */ 
+  border: none;                         /*  Box Rahmen keine Angaben */
+  border-radius: 4px;                   /* Box mit radius von 4 pixel 0.03 cm*/
+  color: black;                         /* Schrift Farbe Schwarz */
+  padding: 16px 40px;                   /*Innen Abstand */
+  text-decoration: none;                /* Text Decoration: Voreinstellung */ 
+  font-size: 30px;                      /* Schriftgrad 0,25cm*/
+  margin: 2px;                          /* Äußere Abstand */
+  cursor: pointer;                      /* Cursor in Form eines Zeigers */
+}
+input[type=submit] {      /*Voreinstellung Nummer Eingabe Fenster*/
+  width: 20%;            /* Elementen Breite 100% */
+  padding: 8px 20px;      /* Innenabstand  */
+  margin: 8px 0;          /* Außenabstand */
+  box-sizing: border-box; /* Angabe gilt für Inhalt, Innenabstand und Rahmen */
+  border: 3px solid black;/* Rahmen Aussehen */
+  border-radius: 4px;     /* Rahmen Radius */
+}
+
+input[type=number] {
+  width: 30%;
+  padding: 8px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 3px solid rgb(0, 0, 0);
+  border-radius: 4px;
+}
+  </style>
+    	</head>
+          <body>
+              <center><h1>Motor Ansteuerung mit Stap Converter</h1></center>
+            <div id = "parameter">
+              <div class="container">
+            <h2> Parameter </h2>
+            <h3> Stap Converter </h3>
+              <br>
+           
+                D:<input type="number" id="MS_D" required name="D_S" min="0.1" max ="1" value="0" step="0.1">
+                <input type="submit" onclick = "onMS_D_()" value="Ok">
+             
+              </br>
+                <br>
+        
+                Um:<input type="number" id="MS_Um" required name="Um_S" min="0.1" max="5" value="0" step="0.1">
+                <input type="submit" onclick = "onMS_Um_()" value="Ok">
+        
+                </br>
+                <br>
+        
+                 Im:<input type="number" id="MS_Im" required name="Im_S" min="0" max="90" value="0" step="0.1">
+                <input type="submit" onclick = "onMS_Im_()" value="Ok">
+  
+                </br>
+              </div>
+                <h3> Motor Ansteuerung </h3>
+                <br>
+        
+                fp:<input type="number" id="MS_fp" required name="fp_S" min="1" max="100000" value="0" step="1">
+                <input type="submit" onclick = "onMS_fp_()" value="Ok">
+           
+              </br>
+              <br>
+              
+				q:<input type="number" id="MS_q" required name="q" min="1" max ="1000" value="0" step="2">
+              <input type="submit" onclick = "onMS_q_()" value="Ok">
+            
+              </br>
+              <br>
+				<div class="slidecontainer">
+          
+				f1: <input id="MS_f1" type="number" required name="f1" min="1" max ="1000" onclick="onMS_f1_()" value="0">
+  
+                </div> 
+              </br> 
+            </div>
+              
+            <div id="totzeit">
+              
+              <h2>Totzeit</h2>
+
+                <br>
+                <a><button id="MS_Deadtime_ja" onclick ="onDeadtime_()" class="button botton1">JA</button></a>
+                <a><button id="MS_Deadtime_nein" onclick ="offDeadtime_()" class="button botton1">NEIN</button></a>
+                </br>
+              </div>
+
+
+              <div id="stapform">
+                <h2> Typ Konverter </h2>
+                <br>
+                <a><button id="MS_Up" onclick = "onMS_Up_()" class="button botton2">Hochsetzsteller</button></a>
+              </br>
+              <br>
+                <a><button id="MS_Down" onclick = "onMS_Down_()" class="button botton2">Tiefsetzsteller</button></a>
+              </br>
+              </div>  
+                <div id="start_stop">
+                <a><button id="MS_START" onclick = "MS_START_()" class="button botton3">START</button></a>
+                <a href="/STOP"><button class="button botton3">STOP</button></a>
+              </div>
+              
+              <div id="m_richtung">
+                <h2> Drehrichtung </h2>
+                <br>
+                <a><button id="MS_Direction_L" onclick = "onDirection_L()" class="button botton4">LINKS</button></a>
+                </br>
+                <br>
+                <a><button id="MS_Direction_R" onclick = "onDirection_R()" class="button botton4">RECHTS</button></a>
+                </br>
+                <br>
+                <a><button id="MS_Direction_S" onclick = "onDirection_S()" class="button botton4">MOTOR STOP</button></a>
+                </br>
+              </div>
+
+              <div id="messwerte">
+                <h2>Messwerte</h2>
+                <p>
+                  <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
+                  <span class="voltage">Spannung:</span> 
+                  <span id="voltage">%SPANNUNG%</span> V
+                
+                </p>
+                <p>
+                  <i class="fas fa-tint" style="color:#00add6;"></i> 
+                  <span class="current">Strom:</span>
+                  <span id="current">%STROM%</span> A
+                  
+                </p>
+                <p>
+                  <i class="fas fa-tint" style="color:#00add6;"></i> 
+                  <span class="Voltage_Stap">Us</span>
+                  <span id="Voltage_Stap">%STAP_U%</span> V
+           
+                </p>
+                  <p>
+                  <i class="fas fa-tint" style="color:#00add6;"></i> 
+                  <span class="Current_Stap">Is</span>
+                  <span id="Current_Stap">%STAP_STROM%</span> A
+                 
+                </p>
+              </div>  
+
+          </body>
+      <script>
+	  var url = "ws://192.168.4.1:1337/";
+var output;
+var Um;
+var Im;
+var fp;
+var D;
+var q;
+var f1;
+var UF_Left;
+var UF_Right;
+var UF_Stop;
+var Stap_Up;
+var Stap_Down;
+var Deadtime_ja;
+var Deadtime_nein;
+var START_M;
+
+// This is called when the page finishes loading
+function init() {
+ 
+    // Assign page elements to variables
+    output = document.getElementById("output");
+    
+    // Connect to WebSocket server
+    wsConnect(url);
+}
+ 
+// Call this to connect to the WebSocket server
+function wsConnect(url) {
+    
+    // Connect to WebSocket server
+    websocket = new WebSocket(url);
+    
+    // Assign callbacks
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+}
+ 
+// Called when a WebSocket connection is established with the server
+function onOpen(evt) {
+ 
+    // Log connection state
+    console.log("Connected");
+    
+    // Enable button
+    //button.disabled = false;
+    
+    // Get the current state of the LED
+    doSend("Motor_Stap_State");
+}
+ 
+// Called when the WebSocket connection is closed
+function onClose(evt) {
+ 
+    // Log disconnection state
+    console.log("Disconnected");
+    
+    // Disable button
+    //button.disabled = true;
+    
+    // Try to reconnect after a few seconds
+    setTimeout(function() { wsConnect(url) }, 2000);
+}
+ 
+// Called when a message is received from the server
+function onMessage(evt) {
+ 
+    // Print out our received message
+    console.log("Received: " + evt.data);
+
+}
+ 
+// Called when a WebSocket error occurs
+function onError(evt) {
+    console.log("ERROR: " + evt.data);
+}
+ 
+// Sends a message to the server (and prints it to the console)
+function doSend(message) {
+    console.log("Sending: " + message);
+    websocket.send(message);
+}
+ 
+// Called whenever the HTML button is pressed
+function onMS_q_() {
+	q = document.getElementById("MS_q").value;
+	console.log(q);
+    doSend("MS_q");
+    doSend(q);
+}
+
+function onMS_f1_() {
+  f1 = document.getElementById("MS_f1").value;
+  console.log(f1);
+  doSend("MS_f1");
+  doSend(f1);
+}
+
+function onMS_Um_() {
+	Um = document.getElementById("MS_Um").value;
+	console.log(Um);
+    doSend("MS_Um");
+    doSend(Um);
+}
+
+function onMS_fp_() {
+	fp = document.getElementById("MS_fp").value;
+	console.log(fp);
+    doSend("MS_fp");
+    doSend(fp);
+}
+
+function onMS_Im_() {
+	Im = document.getElementById("MS_Im").value;
+	console.log(Im);
+	doSend("MS_Im");
+	doSend(Im);
+}
+
+function onMS_D_() {
+	D = document.getElementById("MS_D").value;
+	console.log(D);
+	doSend("MS_D");
+	doSend(D);
+}
+
+function onDeadtime_() {
+	Deadtime_ja = document.getElementById("MS_Deadtime_ja");
+    doSend("MS_Deadtime_ja");
+}
+
+function offDeadtime_() {
+	Deadtime_nein = document.getElementById("MS_Deadtime_nein");
+    doSend("MS_Deadtime_nein");
+}
+
+function onMS_Up_() {
+	Stap_Up = document.getElementById("MS_Up");
+    doSend("MS_Up");
+}
+
+function onMS_Down_() {
+	Stap_Down = document.getElementById("MS_Down");
+    doSend("MS_Down");
+}
+
+function onDirection_L() {
+	UF_Left = document.getElementById("MS_Direction_L");
+    doSend("MS_Direction_L");
+}
+
+function onDirection_R() {
+	UF_Right = document.getElementById("MS_Direction_R");
+    doSend("MS_Direction_R");
+}
+
+function onDirection_S() {
+	UF_Stop = document.getElementById("MS_Direction_S");
+    doSend("MS_Direction_S");
+}
+
+function MS_START_() {
+	START_MS = document.getElementById("MS_START");
+    doSend("MS_START");
+}
+
+// Call the init function as soon as the page loads
+window.addEventListener("load", init, false);
+	  /*
+            setInterval(function ( ) {
+              var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("voltage").innerHTML = this.responseText;
+                }
+              };
+              xhttp.open("GET", "/Voltage", true);
+              xhttp.send();
+            }, 1000 ) ;
+
+            setInterval(function ( ) {
+              var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("current").innerHTML = this.responseText;
+                }
+              };
+              xhttp.open("GET", "/Current", true);
+              xhttp.send();
+            }, 1000) ;
+            setInterval(function ( ) {
+              var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("Voltage_Stap").innerHTML = this.responseText;
+                }
+              };
+              xhttp.open("GET", "/Voltage_Stap", true);
+              xhttp.send();
+            }, 1000 ) ;
+
+            setInterval(function ( ) {
+              var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("Current_Stap").innerHTML = this.responseText;
+                }
+              };
+              xhttp.open("GET", "/Current_Stap", true);
+              xhttp.send();
+            }, 1000 ) ;
+    
+            var slider = document.getElementById("f1");
+            var output = document.getElementById("demo");
+            output.innerHTML = slider.value;
+
+            slider.oninput = function() {
+              output.innerHTML = this.value;
+            }
+		*/
+      </script>
+   </body>
+</html>
