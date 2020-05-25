@@ -1,0 +1,60 @@
+<!DOCTYPE html>      <!-- deklaration den Browser nach HTML Standarts zu handeln  -->
+<html>   <!-- Anfang des html Bereichs  -->
+<head> <!-- Angaben über das Dokument -->
+  <title>Ansteuerung AC- und DC Konverter</title>     
+ 
+  <style> /*stylistische Einstellungen an Inhalt Form des Dokuments*/
+
+  body{ 
+    background-color:darkslategray; /* Hintergrund Farbe dunkel-hell-grau*/
+  }
+.button {                               /*Einstellungen  zur den Knopfen */
+  display: inline-block;                /* Erzeugung eines Boxes */
+  background-color: #FFFFFF;            /* Box Frame Weiss  */
+  border: none;                         /* Box Rahmen keine Angaben */
+  border-radius: 4px;                   /* Box mit radius von 4 pixel 0.03 cm*/
+  color: black;                         /* Schrift Farbe Schwarz */
+  padding: 16px 40px;                   /* Innen Abstand */
+  text-decoration: none;                /* Text Decoration: Voreinstellung  */
+  font-size: 30px;                      /* Schriftgrad 0,25cm*/
+  margin: 2px;                          /* Äußere Abstand */
+  cursor: pointer;                      /* Cursor in Form eines Zeigers */
+}
+
+.title{
+  background-color: #FFFFFF;           /*  Schriftform für das Titelbild ist Weiss */
+}
+  </style>
+
+</head> <!-- Kopfteil Ende -->
+
+<body>  <!-- Anfang der anzuzeigender Inhalts -->
+  <center><h1 style="color:#FFFFFF">Ansteuerung AC- und DC Konverter</h1></center> <!-- Text zentriert, Shriftwarbe Weiß -->
+
+    <div id="navi">       <!-- gemeinsame Bereich für Knöpfer mit id-Attribut 
+                          zur identifizierung des Elements innerhalb des Dokuments für CSS, 
+                          Javascripts-DOM Methoden -->  
+    <center> 
+                          <!-- die Knöpfe zentriert darzustellen -->
+                          <!-- Mit einem a-Element können Sie einen Link zu einem anderen Dokument oder zu einem Anker (anchor) setzen.
+                          Hyperlinks, auch „Verweise“ genannt, sind ein entscheidender Bestandteil jedes Hypertext-Projekts 
+                          und der „intelligente Mehrwert“ des World Wide Web.--> 
+                          <!-- Das href-Attribut (href = hyper reference = Hyper(text)-Referenz) verwandelt
+                           das a-Element in einen Verweis, 
+                           indem Sie ihm das gewünschte Verweisziel als Wert zuweisen. -->
+      <a href="/Pulsform"><button class="button botton">Puls Generator</button></a> 
+      <a href="/Stap_Converter"><button class="button botton">Stab Konverter</button></a>
+      <a href="/Motor_Controll"><button class="button botton">Motor Steuerung</button></a>
+      <a href="/Motor_Controll_and_Stap"><button class="button botton">Motor Steuerung mit Stap Konverter</button></a>
+    </div>
+
+    </center>
+    
+    <div class="main_content">    <!-- definierte Bereich mit zuordung zur Classe main content -->
+      <br>
+      <div style="color: white;" class="header"><h1>Bedienungsinformationen:</h1></div>    
+      <div class="info">          <!-- die vorlgenden Texte sind unter einige classe="Info " -->
+      </br> 
+    </div>
+    </body>
+</html>
