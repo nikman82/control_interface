@@ -69,8 +69,10 @@ String D_S_Message; //get Duty Circle D for Stap Converter  from Webclient
 String Im_S_Message;//get threshold current for Stap Converter from Webclient
 String Um_S_Message;//get threshold current for Stap Converter from Webclient
 String var;         //measure parameter set to Webserver      
+int Pulsform_measure = 0;
 uint16_t sys_ADC = 1023;		//AD-Condverter resolution number 10 Bit resolution
 float sens_U[] = {3.3,5};		//AD-Converter max.Voltage [V] 
+
 
 float v = 0.00;      //voltage measure variable for three phasen Converter    
 float c = 0.00;      //current measure variable for three phasen Converter  
@@ -114,6 +116,11 @@ void onWebSocketEvent(uint8_t client_num,
 
     if ( strcmp((char *)payload,"Pulsform_State" ) == 0 ) { 
       data.State_Site = STATE_PULSFORM;   
+        if ( strcmp((char *)payload,"U" ) == 0 ) { 
+            Pulsform_measure = 1;
+        }else if( strcmp((char *)payload,"I" ) == 0 ){
+            Pulsform_measure = 2;
+        }
       }else if ( strcmp((char *)payload,"Motor_State" ) == 0 ) { 
          data.State_Site = STATE_MOTOR;
          }else if ( strcmp((char *)payload,"Stap_State" ) == 0 ) {
@@ -157,6 +164,8 @@ void onWebSocketEvent(uint8_t client_num,
           send_Value(data.State_Start, buffer_c,data.Instruction=13);  
           }
           data.State_Measure=MEASURE_PULSFORM;    
+           webSocket.sendTXT(client_num, "START_M");
+           
           //State Input Pulsform      
        }else if( strcmp((char *)payload,"Fest_q")==0){
           data.State_Param=1; 
@@ -164,12 +173,21 @@ void onWebSocketEvent(uint8_t client_num,
           data.State_Param=2; 
        }else if( strcmp((char *)payload,"Fest_m")==0){
           data.State_Param=3;  
-       }else if  ( strcmp((char *)payload, "STOP") == 0 ){
-       }else if  ( strcmp((char *)payload, "U") == 0 ){
-       webSocket.sendTXT(client_num, readVoltage().c_str());
        } else {
            Serial.println("[%u] Message not recognized");
       }
+      }
+
+      switch(Pulsform_measure)
+      {
+        case 1:
+        webSocket.sendTXT(client_num, readVoltage().c_str());
+        break;
+        case 2:
+        webSocket.sendTXT(client_num, readCurrent().c_str());
+        break;
+        default:
+        break;
       }
 
        switch(data.State_Param)
