@@ -120,28 +120,34 @@ function wsConnect(url) {
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
-	websocket.onmeasure = function(evt) { setInterval(evt) };
 }
  
  // Called when a message is received from the server
 function onMessage(evt) {
 
     // Print out our received message
-
-    console.log("Received: " + evt.data);
-	voltage=evt.data;
-	console.log("U = " + voltage);
-	voltageMeasure(evt);
-
-	   // Print out our received message
-    console.log("Received: " + evt.data);
-	current=evt.data;
-	console.log("I = " + current);
-	currentMeasure(evt);
 	
+    console.log("Received: " + evt.data);
+	if(evt.data == "START_M")
+	{
+	setInterval (evt);
+		switch(evt.data)
+		{
+		case "U":
+		voltage=evt.data;
+		console.log("U = " + voltage);
+		voltageMeasure(evt);
+		break;
+		case "I":
+		   // Print out our received message
+		current=evt.data;
+		console.log("I = " + current);
+		currentMeasure(evt);
+		break;
+		
+		}
+	}	
 }
-
-
 
 	function voltageMeasure(event) {
   document.getElementById("voltage").innerHTML = event.data;
@@ -169,9 +175,6 @@ function onClose(evt) {
  
     // Log disconnection state
     console.log("Disconnected");
-    
-    // Disable button
-    //button.disabled = true;
     
     // Try to reconnect after a few seconds
     setTimeout(function() { wsConnect(url) }, 2000);
@@ -240,13 +243,9 @@ function START_P_() {
 
 setInterval(function (evt) {
  doSend("U"); 
-
-}, 1000);
-
-setInterval(function (evt) {
  doSend("I");
-
 }, 1000);
+
 
 // Call the init function as soon as the page loads
 window.addEventListener("load", init, false);
