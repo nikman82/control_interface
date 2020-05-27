@@ -183,32 +183,23 @@ input[type=number] {
 
               <div id="messwerte">
                 <h2>Messwerte</h2>
-                <p>
-                  <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
-                  <span class="voltage">Spannung:</span> 
-                  <span id="voltage">%SPANNUNG%</span> V
-                
-                </p>
-                <p>
-                  <i class="fas fa-tint" style="color:#00add6;"></i> 
-                  <span class="current">Strom:</span>
-                  <span id="current">%STROM%</span> A
-                  
-                </p>
-                <p>
-                  <i class="fas fa-tint" style="color:#00add6;"></i> 
-                  <span class="Voltage_Stap">Us</span>
-                  <span id="Voltage_Stap">%STAP_U%</span> V
-           
-                </p>
-                  <p>
-                  <i class="fas fa-tint" style="color:#00add6;"></i> 
-                  <span class="Current_Stap">Is</span>
-                  <span id="Current_Stap">%STAP_STROM%</span> A
-                 
-                </p>
-              </div>  
-
+				<p>
+                  <span class="voltage">Spannung Up</span>   <!-- <span> leitet einen allgemeinen Inline-Bereich ein. </span> beendet diesen Bereich.  --> 
+				  <span id="voltage" oninput = "voltageMeasure(evt)">0</span> V
+				</p>
+				<p>
+				  <span class="current">Strom Ip</span>
+				  <span id="current" oninput="currentMeasure(evt)">0</span> A
+				</p>	
+				<p>
+			      <span class="voltage">Spannung Us</span>   <!-- <span> leitet einen allgemeinen Inline-Bereich ein. </span> beendet diesen Bereich.  --> 
+				  <span id="voltage_Stap" oninput = "voltageStapMeasure(evt)">0</span> V
+				</p>
+				<p>
+				  <span class="current">Strom Is</span>
+				  <span id="current_Stap" oninput="currentStapMeasure(evt)">0</span> A		  
+				</p>
+			  </div>
           </body>
       <script>
 	  var url = "ws://192.168.4.1:1337/";
@@ -245,11 +236,18 @@ function wsConnect(url) {
     websocket = new WebSocket(url);
     
     // Assign callbacks
-    websocket.onopen = function(evt) { onOpen(evt) };
+	websocket.onopen = function(evt) { onOpen(evt) };
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
+	websocket.onmeasure_U = function() {setInterval(evt)};
+	websocket.onmeasure_I = function() {setInterval(evt)};
+	websocket.onmeasure_U_Stap = function() {setInterval(evt)};
+	websocket.onmeasure_I_Stap = function() {setInterval(evt)};
 }
+ 
+ 
+
  
 // Called when a WebSocket connection is established with the server
 function onOpen(evt) {
@@ -279,12 +277,39 @@ function onClose(evt) {
  
 // Called when a message is received from the server
 function onMessage(evt) {
- 
+
     // Print out our received message
+	
     console.log("Received: " + evt.data);
+	if(evt.data=="START_M")
+	Start_M="Start_Measure";
+	else if(output=="U")
+	voltageMeasure(evt);
+	else if(output =="I")
+	currentMeasure(evt);
+	else if(output=="U_Stap")
+	voltageStapMeasure(evt);
+	else if(output=="I_Stap")
+	currentStapMeasure(evt);
 
 }
  
+ 	function voltageMeasure(event) {
+  document.getElementById("voltage").innerHTML = event.data;
+}
+
+	function currentMeasure(event) {
+  document.getElementById("current").innerHTML = event.data;
+}
+
+
+	function voltageStapMeasure(event) {
+  document.getElementById("voltage_Stap").innerHTML = event.data;
+}
+
+	function currentStapMeasure(event) {
+  document.getElementById("current_Stap").innerHTML = event.data;
+}
 // Called when a WebSocket error occurs
 function onError(evt) {
     console.log("ERROR: " + evt.data);
@@ -377,62 +402,40 @@ function onDirection_S() {
 function MS_START_() {
 	START_MS = document.getElementById("MS_START");
     doSend("MS_START");
+	output="Start_M";
 }
+
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("U");
+ output = "U"; 
+ }
+}, 700);
+
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("I");
+ output="I";
+ }
+}, 800);
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("U_Stap");
+ output = "U_Stap"; 
+ }
+}, 900);
+
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("I_Stap");
+ output="I_Stap";
+ }
+}, 1000);
+
 
 // Call the init function as soon as the page loads
 window.addEventListener("load", init, false);
-	  /*
-            setInterval(function ( ) {
-              var xhttp = new XMLHttpRequest();
-              xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                  document.getElementById("voltage").innerHTML = this.responseText;
-                }
-              };
-              xhttp.open("GET", "/Voltage", true);
-              xhttp.send();
-            }, 1000 ) ;
-
-            setInterval(function ( ) {
-              var xhttp = new XMLHttpRequest();
-              xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                  document.getElementById("current").innerHTML = this.responseText;
-                }
-              };
-              xhttp.open("GET", "/Current", true);
-              xhttp.send();
-            }, 1000) ;
-            setInterval(function ( ) {
-              var xhttp = new XMLHttpRequest();
-              xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                  document.getElementById("Voltage_Stap").innerHTML = this.responseText;
-                }
-              };
-              xhttp.open("GET", "/Voltage_Stap", true);
-              xhttp.send();
-            }, 1000 ) ;
-
-            setInterval(function ( ) {
-              var xhttp = new XMLHttpRequest();
-              xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                  document.getElementById("Current_Stap").innerHTML = this.responseText;
-                }
-              };
-              xhttp.open("GET", "/Current_Stap", true);
-              xhttp.send();
-            }, 1000 ) ;
-    
-            var slider = document.getElementById("f1");
-            var output = document.getElementById("demo");
-            output.innerHTML = slider.value;
-
-            slider.oninput = function() {
-              output.innerHTML = this.value;
-            }
-		*/
+	  
       </script>
    </body>
 </html>

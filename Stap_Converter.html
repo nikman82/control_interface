@@ -141,16 +141,16 @@ input[type=submit] {      /*Voreinstellung Nummer Eingabe Fenster*/
             </div>
             <div id="messwerte">
               <h2>Messwerte</h2>
-            <p>
-              <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
-              <span class="voltage">Spannung Up</span> 
-              <span id="voltage_stap">%STAP_U%</span> V
-            </p>
-            <p>
-              <i class="fas fa-tint" style="color:#00add6;"></i> 
-              <span class="current_stap">Strom Ip</span>
-              <span id="current_stap">%STAP_STROM%</span> A
-            </p>
+				<p>
+			      <span class="voltage">Spannung Up</span>   <!-- <span> leitet einen allgemeinen Inline-Bereich ein. </span> beendet diesen Bereich.  --> 
+				  <span id="voltage_Stap" oninput = "voltageStapMeasure(evt)">0</span> V
+				</p>
+				<p>
+				
+				  <span class="current">Strom Ip</span>
+				  <span id="current_Stap" oninput="currentStapMeasure(evt)">0</span> A		  
+				</p>
+			</div>
             </br>
             </div>
           </body>
@@ -166,6 +166,7 @@ var D;
 var Stap_Up;
 var Stap_Down;
 var START_S;
+var START_M;
 
 // This is called when the page finishes loading
 function init() {
@@ -188,6 +189,8 @@ function wsConnect(url) {
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
+	websocket.onmeasure_U = function() {setInterval(evt)};
+	websocket.onmeasure_I = function() {setInterval(evt)};
 }
  
 // Called when a WebSocket connection is established with the server
@@ -195,9 +198,6 @@ function onOpen(evt) {
  
     // Log connection state
     console.log("Connected");
-    
-    // Enable button
-    //button.disabled = false;
     
     // Get the current state of the LED
     doSend("Stap_State");
@@ -218,10 +218,26 @@ function onClose(evt) {
  
 // Called when a message is received from the server
 function onMessage(evt) {
- 
-    // Print out our received message
-    console.log("Received: " + evt.data);
 
+    // Print out our received message
+	
+    console.log("Received: " + evt.data);
+	if(evt.data=="START_M")
+	Start_M="Start_Measure";
+	else if(output=="U_Stap")
+	voltageStapMeasure(evt);
+	else if(output =="I_Stap")
+	currentStapMeasure(evt);
+
+}
+
+ 
+ function voltageStapMeasure(event) {
+  document.getElementById("voltage_Stap").innerHTML = event.data;
+}
+
+	function currentStapMeasure(event) {
+  document.getElementById("current_Stap").innerHTML = event.data;
 }
  
 // Called when a WebSocket error occurs
@@ -275,34 +291,26 @@ function onStap_DOWN_() {
 function START_S_() {
 	START_S = document.getElementById("START_S");
     doSend("START_S");
+	output="Start_M";
 }
 
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("U_Stap");
+ output = "U_Stap"; 
+ }
+}, 800);
+
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("I_Stap");
+ output="I_Stap";
+ }
+}, 1000);
 
 // Call the init function as soon as the page loads
 window.addEventListener("load", init, false);
-	/*
-          setInterval(function ( ) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("voltage_stap").innerHTML = this.responseText;
-              }
-            };
-            xhttp.open("GET", "/Voltage_Stap", true);
-            xhttp.send();
-          }, 1000 ) ;
-          
-          setInterval(function ( ) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-              if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("current_stap").innerHTML = this.responseText;
-              }
-            };
-            xhttp.open("GET", "/Current_Stap", true);
-            xhttp.send();
-          }, 1000 ) ;
-		  */
+
         </script>
     </body>
   </html>

@@ -85,9 +85,6 @@ input[type=number] {      /*Voreinstellung Nummer Eingabe Fenster*/
 <script>             /*<!-- Anfang Java Script Code Umgebung -->*/
 var url = "ws://192.168.4.1:1337/";
 var output;
-var button;
-var canvas;
-var context;
 var Deadt_j;
 var Deadt_n;
 var f1;
@@ -99,6 +96,7 @@ var Schwenk;
 var START_P;
 var voltage;
 var current;
+var Start_M;
 // This is called when the page finishes loading
 function init() {
  
@@ -120,6 +118,8 @@ function wsConnect(url) {
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
+	websocket.onmeasure_U = function() {setInterval(evt)};
+	websocket.onmeasure_I = function() {setInterval(evt)};
 }
  
  // Called when a message is received from the server
@@ -128,26 +128,15 @@ function onMessage(evt) {
     // Print out our received message
 	
     console.log("Received: " + evt.data);
-	if(evt.data == "START_M")
-	{
-	setInterval (evt);
-		switch(evt.data)
-		{
-		case "U":
-		voltage=evt.data;
-		console.log("U = " + voltage);
-		voltageMeasure(evt);
-		break;
-		case "I":
-		   // Print out our received message
-		current=evt.data;
-		console.log("I = " + current);
-		currentMeasure(evt);
-		break;
-		
-		}
-	}	
+	if(evt.data=="START_M")
+	Start_M="Start_Measure";
+	else if(output=="U")
+	voltageMeasure(evt);
+	else if(output =="I")
+	currentMeasure(evt);
+
 }
+
 
 	function voltageMeasure(event) {
   document.getElementById("voltage").innerHTML = event.data;
@@ -242,10 +231,18 @@ function START_P_() {
 }
 
 setInterval(function (evt) {
- doSend("U"); 
- doSend("I");
-}, 1000);
+if(Start_M=="Start_Measure"){
+ doSend("U");
+	output="U";
+ }
+}, 800);
 
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("I");
+	output="I";
+ }
+}, 1000);
 
 // Call the init function as soon as the page loads
 window.addEventListener("load", init, false);
