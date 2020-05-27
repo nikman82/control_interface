@@ -116,20 +116,22 @@ void onWebSocketEvent(uint8_t client_num,
 
     if ( strcmp((char *)payload,"Pulsform_State" ) == 0 ) { 
       data.State_Site = STATE_PULSFORM;   
-        if ( strcmp((char *)payload,"U" ) == 0 ) { 
-            Pulsform_measure = 1;
-        }else if( strcmp((char *)payload,"I" ) == 0 ){
-            Pulsform_measure = 2;
-        }
       }else if ( strcmp((char *)payload,"Motor_State" ) == 0 ) { 
          data.State_Site = STATE_MOTOR;
          }else if ( strcmp((char *)payload,"Stap_State" ) == 0 ) {
            data.State_Site = STATE_STAP;
             }else if ( strcmp((char *)payload,"Motor_Stap_State" ) == 0 ) {
               data.State_Site = STATE_MOTOR_STAP; 
-                }
-                  
-
+          }else  if ( strcmp((char *)payload,"U" ) == 0 ) { 
+             webSocket.sendTXT(client_num, readVoltage().c_str());
+          }else if( strcmp((char *)payload,"I" ) == 0 ){
+             webSocket.sendTXT(client_num,readCurrent().c_str() );
+          } else  if ( strcmp((char *)payload,"U_Stap" ) == 0 ) { 
+             webSocket.sendTXT(client_num, readStap_U().c_str());
+          }else if( strcmp((char *)payload,"I_Stap" ) == 0 ){
+             webSocket.sendTXT(client_num,readStap_I().c_str() );
+          }
+ 
       switch(data.State_Site)
       {
         case STATE_PULSFORM:
@@ -156,7 +158,8 @@ void onWebSocketEvent(uint8_t client_num,
           data.State_Mode=STATE_SCHWENKSTEUERUNG;
           send_Value(data.State_Mode,buffer_c,data.Instruction=9);  
       } else if  ( strcmp((char *)payload, "START_P") == 0 ) {
-          data.State_Start=STATE_START;
+          data.State_Start=STATE_START;    
+          webSocket.sendTXT(client_num, "START_M");
           if(data.State_Mode==STATE_PWM){
           send_Value(data.State_Start, buffer_c,data.Instruction=23);
           }
@@ -164,8 +167,6 @@ void onWebSocketEvent(uint8_t client_num,
           send_Value(data.State_Start, buffer_c,data.Instruction=13);  
           }
           data.State_Measure=MEASURE_PULSFORM;    
-           webSocket.sendTXT(client_num, "START_M");
-           
           //State Input Pulsform      
        }else if( strcmp((char *)payload,"Fest_q")==0){
           data.State_Param=1; 
@@ -178,17 +179,6 @@ void onWebSocketEvent(uint8_t client_num,
       }
       }
 
-      switch(Pulsform_measure)
-      {
-        case 1:
-        webSocket.sendTXT(client_num, readVoltage().c_str());
-        break;
-        case 2:
-        webSocket.sendTXT(client_num, readCurrent().c_str());
-        break;
-        default:
-        break;
-      }
 
        switch(data.State_Param)
             {
@@ -258,6 +248,7 @@ void onWebSocketEvent(uint8_t client_num,
           data.State_Param=5;
           } else if  ( strcmp((char *)payload, "START_S") == 0 ) {
           data.State_Start=STATE_START;
+           webSocket.sendTXT(client_num, "START_M");
           send_Value(data.State_Start, buffer_c,data.Instruction=15);
           } else {
           Serial.println("[%u] Message not recognized");
@@ -315,6 +306,7 @@ void onWebSocketEvent(uint8_t client_num,
           } else if ( strcmp((char *)payload, "START_S") == 0 ) {
           data.State_Measure=MEASURE_STAP;
           data.State_Start=STATE_START;
+           webSocket.sendTXT(client_num, "START_M");
           send_Value(data.State_Start, buffer_c,data.Instruction=14);
           } else {
           Serial.println("[%u] Message not recognized");
@@ -415,6 +407,7 @@ void onWebSocketEvent(uint8_t client_num,
           } else if ( strcmp((char *)payload, "MS_START") == 0 ) {
           data.State_Measure=MEASURE_UF_STAP;
           data.State_Start=STATE_START;
+           webSocket.sendTXT(client_num, "START_M");
           send_Value(data.State_Start, buffer_c,data.Instruction=16);
            } else {
           Serial.println("[%u] Message not recognized");
