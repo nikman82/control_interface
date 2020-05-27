@@ -114,18 +114,13 @@ input[type=number] {      /*Voreinstellung Nummer Eingabe Fenster */
 	</div>
     <div id="messwerte">
         <h2>Messwerte</h2>
-          <p>
-            <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
-            <span class="voltage">Spannung</span> 
-            <span id="voltage">%SPANNUNG%</span> V
-  
-          </p>
-          <p>
-            <i class="fas fa-tint" style="color:#00add6;"></i> 
-            <span class="current">Strom</span>
-            <span id="current">%STROM%</span> A
-       
-          </p>
+        <span class="voltage">Spannung</span>   <!-- <span> leitet einen allgemeinen Inline-Bereich ein. </span> beendet diesen Bereich.  --> 
+    <span id="voltage" oninput = "voltageMeasure(evt)">0</span> V
+  </p>
+  <p>
+    <i class="fas fa-tint" style="color:#00add6;"></i> 
+    <span class="current">Strom</span>
+    <span id="current" oninput="currentMeasure(evt)">0</span> A
     </div>
         
     <div id="start_stop">
@@ -153,17 +148,15 @@ input[type=number] {      /*Voreinstellung Nummer Eingabe Fenster */
 		
 var url = "ws://192.168.4.1:1337/";
 var output;
-var D;
 var q;
 var f1;
 var UF_Left;
 var UF_Right;
 var UF_Stop;
-var Stap_Up;
-var Stap_Down;
 var Deadtime_ja;
 var Deadtime_nein;
 var START_M;
+var Start_M;
 
 // This is called when the page finishes loading
 function init() {
@@ -182,10 +175,12 @@ function wsConnect(url) {
     websocket = new WebSocket(url);
     
     // Assign callbacks
-    websocket.onopen = function(evt) { onOpen(evt) };
+	websocket.onopen = function(evt) { onOpen(evt) };
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
+	websocket.onmeasure_U = function() {setInterval(evt)};
+	websocket.onmeasure_I = function() {setInterval(evt)};
 }
  
 // Called when a WebSocket connection is established with the server
@@ -216,9 +211,26 @@ function onClose(evt) {
  
 // Called when a message is received from the server
 function onMessage(evt) {
- 
+
     // Print out our received message
+	
     console.log("Received: " + evt.data);
+	if(evt.data=="START_M")
+	Start_M="Start_Measure";
+	else if(output=="U")
+	voltageMeasure(evt);
+	else if(output =="I")
+	currentMeasure(evt);
+
+}
+
+
+	function voltageMeasure(event) {
+  document.getElementById("voltage").innerHTML = event.data;
+}
+
+	function currentMeasure(event) {
+  document.getElementById("current").innerHTML = event.data;
 }
  
 // Called when a WebSocket error occurs
@@ -275,35 +287,26 @@ function onDirection_S() {
 function START_M_() {
 	START_S = document.getElementById("START_M");
     doSend("START_S");
+	output="Start_M";
 }
 
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("U");
+ output = "U"; 
+ }
+}, 800);
+
+setInterval(function (evt) {
+if(Start_M=="Start_Measure"){
+ doSend("I");
+ output="I";
+ }
+}, 1000);
 
 // Call the init function as soon as the page loads
 window.addEventListener("load", init, false);
-/*
-setInterval(function ( ) {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("voltage").innerHTML = this.responseText;
-    }
-  };
-  xhttp.open("GET", "/Voltage", true);
-  xhttp.send();
-}, 1000 ) ;
 
-setInterval(function ( ) {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("current").innerHTML = this.responseText;
-    }
-  };
-  xhttp.open("GET", "/Current", true);
-  xhttp.send();
-}, 1000 ) ;
-
-*/
     </script>
   </body>
 </html>
