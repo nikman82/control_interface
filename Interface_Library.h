@@ -132,10 +132,6 @@ String readCurrent();
 String readFrequenz();
 String readStap_U();
 String readStap_I();
-String processor(const String& var);
-String processor_m(const String& var);
-String processor_s(const String& var);
-String processor_ms(const String& var);
 
 void notFound(AsyncWebServerRequest *request);
 void WiFiEvent(WiFiEvent_t event);
@@ -153,28 +149,8 @@ void onStopRequest(AsyncWebServerRequest *request);
 void onCSSRequest(AsyncWebServerRequest *request);
 void onPageNotFound(AsyncWebServerRequest *request);
 
-void onMeasurePulsform(AsyncWebServerRequest *request);
-void onMeasureMotor(AsyncWebServerRequest *request);
-void onMeasureStap(AsyncWebServerRequest *request);
-void onMeasureMotorStapCurrent(AsyncWebServerRequest *request);
-void readVoltage(AsyncWebServerRequest *request);
-void readCurrent(AsyncWebServerRequest *request);
-void readVoltage_S(AsyncWebServerRequest *request);
-void readCurrent_S(AsyncWebServerRequest *request);
-/*
-void Pulsform_(void);
-void Stap_Converter_(void);
-void Motor_Controll_(void);
-void Motor_Controll_and_Stap_(void);
-
 //Web Interface Variable
 
-extern const char index_html[];
-extern const char Pulsform[]; 
-extern const char Stap_Converter[]; 
-extern const char Motor_Controll[];
-extern const char Motor_Controll_and_Stap[];
-*/
 extern float v; 
 extern float c;
 extern float f;
@@ -184,14 +160,6 @@ extern uint16_t sys_ADC;
 extern float sens_U[];
 extern byte buffer[];
 extern char buffer_c[];
-
-extern const char* INPUT_1;
-extern const char* INPUT_2;
-extern const char* INPUT_3;
-extern const char* S_INPUT_1;
-extern const char* S_INPUT_2;
-extern const char* S_INPUT_3;
-extern const char* S_INPUT_4;
 
 //String MENU_Message;
 
@@ -203,6 +171,6 @@ extern String Up_Message;
 extern String fp_Message;
 extern String D_S_Message;
 extern String Ip_S_Message;
-extern String var;
 extern String function;
+
 #endif

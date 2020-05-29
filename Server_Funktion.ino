@@ -1,8 +1,9 @@
 #include <Wire.h>
 #include <ESPAsyncWebServer.h>
 #include <ETH.h>
+#include <SPIFFS.h>
 #include <WebSocketsServer.h>
-#include "Interface_Library.h"
+#include "Interface_Library.h" 
 
 void send_Value(double data_, char* buffer_,uint8_t buff_){
   dtostrf(data_,7,2, buffer_);
@@ -44,56 +45,6 @@ String readStap_I()
 {
 i_s = (float)data_M.I_S*sens_U[1]/sys_ADC;
   return String(v_s);
-}
-String processor(const String& var){
-  Serial.println(var);
-  if(var == "SPANNUNG"){
-    return readVoltage();
-  }
-  else if(var == "STROM"){
-    return readCurrent();
-  }
-}
-String processor_s(const String& var){
-  Serial.println(var);
-  if(var == "STAP_U"){
-  return readStap_U();
-  }
-  else if(var == "STAP_STROM"){
-  return readStap_I();
-  }
-}
-
-String processor_m(const String& var){
-  Serial.println(var);
-  if(var == "SPANNUNG"){
-    return readVoltage();
-  }
-  else if(var == "STROM"){
-    return readCurrent();
-  }
-  else if(var == "STAP_U"){
-  return readStap_U();
-  }
-  else if(var == "STAP_STROM"){
-  return readStap_I();
-  }
-}
-
-String processor_ms(const String& var){
-  Serial.println(var);
-  if(var == "SPANNUNG"){
-    return readVoltage();
-  }
-  else if(var == "STROM"){
-    return readCurrent();
-  }
-  else if(var == "STAP_U"){
-  return readStap_U();
-  }
-  else if(var == "STAP_STROM"){
-  return readStap_I();
-  }
 }
 
 void WiFiEvent(WiFiEvent_t event)
